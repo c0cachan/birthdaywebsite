@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday! - Windows XP Style</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: url('https://i.pinimg.com/originals/4f/cf/5a/4fcf5aabe2eb3981c4b857b5ade335fa.gif') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Arial', sans-serif;
+      overflow: hidden;
+    }
+
+    /* Taskbar */
+    #taskbar {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      height: 30px;
+      background: linear-gradient(to bottom, #3a6dd6, #1e4ab8);
+      border-top: 1px solid #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 5px;
+      box-sizing: border-box;
+    }
+
+    #start-button {
+      width: 100px;
+      height: 24px;
+      background: linear-gradient(to bottom, #2a8c2a, #1e6b1e);
+      border: 1px solid #000;
+      border-radius: 2px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding-left: 5px;
+      box-sizing: border-box;
+    }
+
+    #start-button::before {
+      content: '';
+      width: 20px;
+      height: 20px;
+      background: url('https://pbs.twimg.com/media/Gth9Wkma8AA_Yqy?format=png&name=360x360') no-repeat center;
+      background-size: contain;
+      margin-right: 5px;
+    }
+
+    #start-button::after {
+      content: 'start';
+      color: #fff;
+      font-size: 14px;
+      font-weight: bold;
+      text-transform: lowercase;
+      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+    }
+
+    #start-button:hover {
+      filter: brightness(1.1);
+    }
+
+    #start-menu {
+      position: fixed;
+      bottom: 30px;
+      left: 5px;
+      width: 200px;
+      background: #c0c0c0;
+      border: 2px solid #000;
+      border-top: 2px solid #fff;
+      border-left: 2px solid #fff;
+      display: none;
+      padding: 5px;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+      z-index: 1000;
+    }
+
+    #start-menu a {
+      display: block;
+      padding: 5px;
+      color: #000;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    #start-menu a:hover {
+      background: #000080;
+      color: #fff;
+    }
+
+    /* Taskbar Icons */
+    #taskbar-icons {
+      display: flex;
+      align-items: center;
+      margin-left: 10px;
+    }
+
+    .taskbar-icon {
+      width: 120px;
+      height: 24px;
+      background: #c0c0c0;
+      border: 1px solid #000;
+      border-top: 1px solid #fff;
+      border-left: 1px solid #fff;
+      margin-right: 5px;
+      display: flex;
+      align-items: center;
+      padding: 0 5px;
+      cursor: pointer;
+      font-size: 12px;
+      color: #000;
+      text-shadow: 1px 1px 1px rgba(255,255,255,0.5);
+    }
+
+    .taskbar-icon.active {
+      background: linear-gradient(to bottom, #a0a0a0, #808080);
+      border: 1px solid #808080;
+      border-top: 1px solid #404040;
+      border-left: 1px solid #404040;
+    }
+
+    .taskbar-icon:hover {
+      filter: brightness(1.1);
+    }
+
+    .taskbar-icon img {
+      width: 16px;
+      height: 16px;
+      margin-right: 5px;
+    }
+
+    /* Desktop Icons */
+    .desktop-icon {
+      position: absolute;
+      text-align: center;
+      color: #fff;
+      text-shadow: 1px 1px #000;
+      font-size: 12px;
+      width: 80px;
+      cursor: pointer;
+    }
+
+    .desktop-icon img {
+      width: 32px;
+      height: 32px;
+    }
+
+    /* Windows */
+    .window {
+      position: absolute;
+      background: #c0c0c0;
+      border: 2px solid #000;
+      border-top: 2px solid #fff;
+      border-left: 2px solid #fff;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+      display: none;
+      min-width: 300px;
+      max-width: 90vw;
+      min-height: 200px;
+      max-height: 80vh;
+      resize: both;
+      overflow: auto;
+      z-index: 10;
+    }
+
+    .window-header {
+      background: linear-gradient(to right, #000080, #1084d0);
+      color: #fff;
+      padding: 2px 5px;
+      font-size: 14px;
+      cursor: move;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .window-header button {
+      background: #c0c0c0;
+      border: 1px solid #000;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      font-size: 12px;
+      line-height: 18px;
+      text-align: center;
+      margin-left: 2px;
+    }
+
+    .window-content {
+      padding: 10px;
+      font-size: 14px;
+      background: #fff;
+      height: calc(100% - 24px);
+      overflow-y: auto;
+    }
+
+    .window-content img {
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <!-- Taskbar -->
+  <div id="taskbar">
+    <div id="start-button"></div>
+    <div id="taskbar-icons"></div>
+    <div id="start-menu">
+      <a href="#" onclick="openWindow('birthday-window')">Birthday Message</a>
+      <a href="#" onclick="openWindow('gallery-window')">Virtual Cake</a>
+      <a href="#" onclick="openWindow('note-window')">A Note for You</a>
+    </div>
+  </div>
+
+  <!-- Desktop Icons -->
+  <div class="desktop-icon" style="top: 10px; left: 10px;" onclick="openWindow('birthday-window')">
+    <img src="https://pbs.twimg.com/media/GtiAUDSa4AAC6qd?format=png&name=small" alt="Message Icon">
+    <div>Birthday Message</div>
+  </div>
+  <div class="desktop-icon" style="top: 10px; left: 100px;" onclick="openWindow('gallery-window')">
+    <img src="https://pbs.twimg.com/media/Gth_Y25aIAACs3K?format=png&name=360x360" alt="Gallery Icon">
+    <div>Virtual Cake</div>
+  </div>
+  <div class="desktop-icon" style="top: 10px; left: 190px;" onclick="openWindow('note-window')">
+    <img src="https://64.media.tumblr.com/73f34eb6543708c5b237fd739b389a55/a76707adad47a36a-a6/s540x810/d5ca09678f2f10b2fa2f553a2c28a650fe3732b4.png" alt="Note Icon">
+    <div>A Note</div>
+  </div>
+
+  <!-- Windows -->
+  <div id="birthday-window" class="window" style="top: 50px; left: 50px;">
+    <div class="window-header">
+      <span>Happy Birthday!</span>
+      <div>
+        <button onclick="minimizeWindow('birthday-window')">-</button>
+        <button onclick="closeWindow('birthday-window')">X</button>
+      </div>
+    </div>
+    <div class="window-content">
+      <h2>🎀✨ HAPPY BIRTHDAY TO THE CUTEST, SWEETEST, MOST ADORABLE KITTY IN THE UNIVERSE! ✨🎀</h2>
+      <p>Wishing you the most amazing day filled with love and joy! You're my favorite person, and I hope this day brings you a lot of love and prosperity and I pray you get everything you wish for my pretty little baby I adore you so much. Your smile is brighter than 1000 sparkly unicorns 🦄✨ (and yes, that’s scientifically proven).</p>
+      <ul>
+        <li>Your hugs are warmer than a fresh taiyaki 🐟🍡 (and I will fight anyone who says otherwise).</li>
+        <li>You’re 1000x cuter than a basket of baby bunnies 🐇💞 (and yes, I will squish your cheeks to prove it).</li>
+        <li>Your smile could power a city 🌆⚡ (and my heart is its #1 customer).</li>
+        <li>Your sneezes sound like a tiny anime character 🤧💫 ("Ee-choo!"—I die every time).</li>
+        <li>You’re my personal sunshine ☀️💛 (even on rainy days, you make my world bright).</li>
+        <li>Your sleepy mumbles are my favorite lullabies 💤🎶</li>
+      </ul>
+      <p>You’re my favorite hello, my hardest goodbye, and my forever snuggle buddy—I’m so grateful you exist. Now blow out those candles and prepare for your most purr-fect year yet! 🎉💞</p>
+      <img src="https://media.tenor.com/scjPe254K6wAAAAi/kuromi-celebrate.gif" alt="Celebration GIF">
+    </div>
+  </div>
+
+  <div id="gallery-window" class="window" style="top: 100px; left: 200px;">
+    <div class="window-header">
+      <span>Virtual Cake</span>
+      <div>
+        <button onclick="minimizeWindow('gallery-window')">-</button>
+        <button onclick="closeWindow('gallery-window')">X</button>
+      </div>
+    </div>
+    <div class="window-content">
+      <img src="https://media.tenor.com/h3zO8_Rzb-IAAAAi/kuromi-birthday.gif" alt="Virtual Cake GIF">
+    </div>
+  </div>
+
+  <div id="note-window" class="window" style="top: 150px; left: 350px;">
+    <div class="window-header">
+      <span>A Note for You</span>
+      <div>
+        <button onclick="minimizeWindow('note-window')">-</button>
+        <button onclick="closeWindow('note-window')">X</button>
+      </div>
+    </div>
+    <div class="window-content" style="white-space: pre-line; text-align: left;">
+      <h3>19 LESSONS FOR YOU AT 19 :3</h3>
+      <ol>
+        <li>You're going to change in ways you can't imagine — I'll love every version of you ^-^</li>
+        <li>No one is coming to save you x_x. When you fail, I'll be there to help pick up the pieces. It's okay to stumble. You'll get back up but everyone's busy with their own stuff so you will have to be there for yourself:3</li>
+        <li>Not everyone sees how incredible you are, but don't let that affect how you see yourself nobody knows you better than yourself ^-^</li>
+        <li>Stop comparing yourself. You're my favorite person and if someone likes you good for them if they don't their loss :D</li>
+        <li>Your mental health matters. Let me carry some weight when it's heavy on your shoulders. I want to be there for you always :3</li>
+        <li>Learn your finances...Save money... but also get midnight fries and games sometimes. Balance!</li>
+        <li>Failures are a part of life :c rejection is redirection x_x</li>
+        <li>Celebrate small wins but don't stop there. Remember to keep pushing forward, you got this! :3</li>
+        <li>You don't need everything figured out yet just start doing whatever you want to do and everything will fall into place after it falls apart.</li>
+        <li>Your body? Perfect. Your heart? Even more so but take good care of it that’s your vessel for this lifetime</li>
+        <li>Believe in yourself, even when others don't. I believe in you always :3</li>
+        <li>Regret hurts worse than rejection. Take the leap for whenever you want to do something.</li>
+        <li>Friends may fade and that's okay, you'll make new ones ^_^</li>
+        <li>Your kindness is your superpower. Stay soft. Respect yourself and others always :3</li>
+        <li>Your habits define you. Choose wisely, but don't be too hard on yourself if you slip up.</li>
+        <li>Read books and invest in yourself</li>
+        <li>Your 20s are for trying things, not perfection.</li>
+        <li>Small steps count. I'll hold your hand through each one.</li>
+        <li>You are enough—right now, exactly as you are.</li>
+      </ol>
+      <img src="https://c.tenor.com/XC4PsHdasfkAAAAd/tenor.gif" alt="Note GIF">
+    </div>
+  </div>
+
+  <script>
+    // Start Menu Toggle
+    document.getElementById('start-button').addEventListener('click', () => {
+      const startMenu = document.getElementById('start-menu');
+      startMenu.style.display = startMenu.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // Window Management
+    let zIndexCounter = 10;
+    const taskbarIcons = document.getElementById('taskbar-icons');
+    const windowIcons = {
+      'birthday-window': 'https://pbs.twimg.com/media/GtiAUDSa4AAC6qd?format=png&name=small',
+      'gallery-window': 'https://pbs.twimg.com/media/Gth_Y25aIAACs3K?format=png&name=360x360',
+      'note-window': 'https://64.media.tumblr.com/73f34eb6543708c5b237fd739b389a55/a76707adad47a36a-a6/s540x810/d5ca09678f2f10b2fa2f553a2c28a650fe3732b4.png'
+    };
+
+    function openWindow(windowId) {
+      const win = document.getElementById(windowId);
+      win.style.display = 'block';
+      win.style.zIndex = zIndexCounter++;
+      document.getElementById('start-menu').style.display = 'none';
+
+      // Create or update taskbar icon
+      let icon = document.getElementById(`taskbar-icon-${windowId}`);
+      if (!icon) {
+        icon = document.createElement('div');
+        icon.id = `taskbar-icon-${windowId}`;
+        icon.className = 'taskbar-icon active';
+        icon.innerHTML = `
+          <img src="${windowIcons[windowId]}" alt="${windowId} icon">
+          ${win.querySelector('.window-header span').textContent}
+        `;
+        icon.addEventListener('click', () => focusWindow(windowId));
+        taskbarIcons.appendChild(icon);
+      } else {
+        icon.classList.add('active');
+      }
+
+      // Update all icons to reflect active state
+      updateTaskbarIcons(windowId);
+    }
+
+    function closeWindow(windowId) {
+      const win = document.getElementById(windowId);
+      win.style.display = 'none';
+      const icon = document.getElementById(`taskbar-icon-${windowId}`);
+      if (icon) {
+        icon.classList.remove('active');
+      }
+    }
+
+    function minimizeWindow(windowId) {
+      const win = document.getElementById(windowId);
+      win.style.display = 'none';
+      const icon = document.getElementById(`taskbar-icon-${windowId}`);
+      if (icon) {
+        icon.classList.remove('active');
+      }
+    }
+
+    function focusWindow(windowId) {
+      const win = document.getElementById(windowId);
+      if (win.style.display === 'none') {
+        openWindow(windowId);
+      } else {
+        win.style.zIndex = zIndexCounter++;
+        updateTaskbarIcons(windowId);
+      }
+    }
+
+    function updateTaskbarIcons(activeWindowId) {
+      const icons = document.querySelectorAll('.taskbar-icon');
+      icons.forEach(icon => {
+        const windowId = icon.id.replace('taskbar-icon-', '');
+        icon.classList.toggle('active', windowId === activeWindowId && document.getElementById(windowId).style.display === 'block');
+      });
+    }
+
+    // Draggable Windows
+    const windows = document.querySelectorAll('.window');
+    windows.forEach(win => {
+      const header = win.querySelector('.window-header');
+      let isDragging = false;
+      let currentX = parseInt(win.style.left) || 0;
+      let currentY = parseInt(win.style.top) || 0;
+      let offsetX, offsetY;
+
+      header.addEventListener('mousedown', (e) => {
+        win.style.zIndex = zIndexCounter++;
+        isDragging = true;
+        offsetX = e.clientX - currentX;
+        offsetY = e.clientY - currentY;
+        updateTaskbarIcons(win.id);
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+
+        const newX = e.clientX - offsetX;
+        const newY = e.clientY - offsetY;
+        const maxX = document.documentElement.clientWidth - win.offsetWidth;
+        const maxY = document.documentElement.clientHeight - win.offsetHeight - 30; // Account for taskbar
+
+        currentX = Math.max(0, Math.min(newX, maxX));
+        currentY = Math.max(0, Math.min(newY, maxY));
+        win.style.left = currentX + 'px';
+        win.style.top = currentY + 'px';
+      });
+
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+    });
+  </script>
+</body>
+</html>
